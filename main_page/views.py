@@ -1,12 +1,30 @@
 from django.shortcuts import render, redirect
 import telebot
-
+from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from . import models
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+
+from .forms import CreateUserForm
 
 # Create your views here.
 bot = telebot.TeleBot('5459935331:AAGVWpnqIK_bYMatPGDtqTWS8iPiWZgTJBc')
+
+
+def registerPage(request):
+    form = CreateUserForm()
+
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Bu akkaunt bosh emas' + user)
+            return redirect('accounts/login')
+
+    context = {'form': form}
+    return render(request, 'registration/register.html', context)
 
 
 def home_page(request):

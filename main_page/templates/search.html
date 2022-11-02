@@ -91,9 +91,9 @@
             <div class="col-sm-8">
                 <h1>Product</h1>
                 <div class="row">
-
+                    {% for product in product %}
                     <div class="col-sm-4">{{product.product_name}}</div>
-
+                    {% endfor %}
                 </div>
             </div>
         </div>
