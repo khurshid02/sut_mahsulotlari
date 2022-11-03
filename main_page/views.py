@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from . import models
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-
+from django.contrib.auth import authenticate, login, logout
 from .forms import CreateUserForm
 
 # Create your views here.
@@ -20,11 +20,32 @@ def registerPage(request):
         if form.is_valid():
             form.save()
             user = form.cleaned_data.get('username')
-            messages.success(request, 'Bu akkaunt bosh emas' + user)
-            return redirect('accounts/login')
+            messages.success(request, 'Bu akkaunt bosh emas ' + user)
+            return redirect('accounts/login/')
 
     context = {'form': form}
     return render(request, 'registration/register.html', context)
+
+
+def loginPage(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.info(request, 'Xatolik')
+
+    context = {}
+    return render(request, '/registration/login.html', context)
+
+
+def logoutPage(request):
+    logout(request)
+    return redirect('/accounts/login')
 
 
 def home_page(request):
@@ -80,9 +101,12 @@ def cart_add(request, pk):
     if request.method == 'POST':
         count = models.Product.objects.get(product_name = pk)
         if count.product_count >= int(request.POST.get('pr_count')):
+            counts = count.product_count - int(request.POST.get('pr_count'))
             models.UserCart.objects.create(user_id=request.user.id,
                                            user_product=count,
                                            user_product_quantity=request.POST.get('pr_count')).save()
+
+            models.Product.objects.filter(product_name = pk).update(product_count=counts)
 
             return redirect(f'/')
 
@@ -103,9 +127,15 @@ def cart_menu(request):
 
 
 def delete(request, pk):
-    product = models.Product.objects.get(id = pk)
+    product = models.Product.objects.get(id=pk)
+    count = models.UserCart.objects.get(user_id=request.user.id,
+                                        user_product=product)
+
     models.UserCart.objects.filter(user_id=request.user.id,
-                                user_product = product).delete()
+                                   user_product=product).delete()
+
+    counts =  product.product_count + count.user_product_quantity
+    models.Product.objects.filter(product_name=product.product_name).update(product_count=counts)
 
     return redirect('/cart')
 
