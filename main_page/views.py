@@ -111,7 +111,9 @@ def delete(request, pk):
 
 
 def shop(request):
-    return render(request, 'registration.html')
+    all_category = models.Category.objects.all()
+
+    return render(request, 'registration.html', {'all_category': all_category})
 
 
 def buy(request):
@@ -152,5 +154,6 @@ def buy(request):
 
 def history(request):
     user_cart = models.Cart.objects.filter(user_id = request.user.id)
+    all_category = models.Category.objects.all()
 
-    return render(request, 'history.html', {'user_cart': user_cart})
+    return render(request, 'history.html', {'user_cart': user_cart, 'all_category': all_category})

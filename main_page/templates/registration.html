@@ -42,21 +42,54 @@
     }
 
    .searchs{
-    display: flex;
-         justify-content: center;
-            align-items: center;
+    margin:20px 0px;
+   }
+   .cards{
+      border-right:2px solid black;
+      height:100%;
+      background-image: linear-gradient(to left, #c3d1f9, #adc0fc, #98aefe, #849cff, #718aff);
+      text-align: center;
+
+   }
+
+   .products{
+    text-align: center;
+   }
+
+   .acard{
+     margin-top:10px;
+
+   }
+
+   .buttons{
+   min-width: 100px;
+   margin:0px 0px 10px 0px;
+   }
+
+   .cardproduct{
+   border:1px solid black;
+   width:350px;
+   margin:20px auto;
+   background-image: radial-gradient(circle, #dfe4f2, #cde3fb, #b2e3ff, #92e5fe, #6ee6f4);
+    min-height:300px;
+   }
+
+   .imgcard{
+   width:250px;
+   height:300px;
+   margin:10px auto;
    }
     </style>
 </head>
 <body>
   <div class="container-fluid header">
        <div class="row">
-           <div class="col-sm-6">
+           <div class="col-lg-5 col-md-4 col-sm-3 col-xs-4">
                <img src="{% static 'images/logo.png' %}" alt="logo" class="logo" />
            </div>
-          <div class="col-sm-6">
+          <div class="col-lg-7 col-md-8 col-sm-9 col-xs-8">
             <div class="row">
-              <ul class="m-0 uls col-sm-9">
+              <ul class="m-0 uls col-lg-9 col-md-8 col-sm-8 col-xs-12">
                  <li class="lis">
                    <a href="/" class="lia">Home</a>
                  </li>
@@ -64,7 +97,7 @@
                   <a href="/contact" class="lia">Contact</a>
                  </li>
                  <li class="lis">
-                   <a href="/" class="lia"></a>
+                   <a href="/history" class="lia">History</a>
                  </li>
                  <li class="lis">
                    <a href="/cart" class="lia"><img class="cartimg" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYC-Iz4uNdM_XPgZ7H0tR1cr1GyQVlshbCSQ&usqp=CAU"></a>
@@ -77,22 +110,38 @@
                  <li class="lis">
                    <a href="/accounts/login" class="lia">Login</a>
                  </li>
+                    <li class="lis">
+                   <a href="/register" class="lia">Registratsiya</a>
+                 </li>
                     {% endif %}
               </ul>
-              <div class="col-sm-3 searchs">
-                    <form action="/search" method="post" class="row">
+              <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 ">
+                    <form action="/search" method="post" class="row searchs">
                         {% csrf_token %}
-                        <input type="text" name="search_product" class="col-sm-8">
-                        <button class="col-sm-4">Qidirish</button>
+                        <input type="text" name="search_product" class="col-sm-6 col-xs-6">
+                        <button class="col-sm-5 col-xs-6">Qidirish</button>
                     </form>
               </div>
             </div>
           </div>
        </div>
   </div>
+  {% block content %}
     <div class="container-fluid">
         <div class="row">
-            <form action="/buy" method="post">
+            <div class="col-xs-4 col-lg-2 col-md-2 col-sm-3 row card cards">
+                <h1>Category</h1>
+                     {% for category in all_category %}
+                <div class="col-sm-12 card acard">
+                    <a href="/category/{{category}}" >
+                     <button class="btn btn-success buttons">{{category}}</button>
+                     </a>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-xs-8 col-lg-10 col-md-10 col-sm-9 products">
+
+                <form action="/buy" method="post">
                    {% csrf_token %}
                  <input type="text" class="form-control" placeholder="First name" name="firstname">
                    <input type="text" class="form-control" placeholder="Last Name" name="lastname">
@@ -100,10 +149,15 @@
                       <input type="text" class="form-control" placeholder="Address" name="address">
                  <input type="text" class="form-control" placeholder="Oplata address" name="address_oplata">
                       <input type="tel" class="form-control" placeholder="Phone" name="number">
-                  <span> <button><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYC-Iz4uNdM_XPgZ7H0tR1cr1GyQVlshbCSQ&usqp=CAU"></button></span>
-             </form>
+                  <span> <button>Zakaz berish</button></span>
+                </form>
+            </div>
         </div>
     </div>
-
+    {% endblock content %}
 </body>
 </html>
+
+
+
+
